@@ -147,75 +147,74 @@ const App = () => {
         </div>
       </header>
 
-      {!showChart ? (
-        // Welcome Screen
-        <div
-          ref={containerRef}
-          className="flex flex-col items-center justify-center h-screen bg-yellow-300"
-        >
-          <h1 className="text-5xl font-bold text-red-800 mb-8">
-            Welcome to Chiefs Nation
-          </h1>
-          <p className="text-lg mb-6 text-center max-w-md">
-            Explore Kansas City Chiefs' stats and compare their performance
-            dynamically with other NFL teams.
-          </p>
-          <button
-            onClick={handleBegin}
-            className="bg-red-600 text-white text-lg px-6 py-3 rounded-lg shadow-lg hover:bg-red-800 transition transform hover:scale-105"
-          >
-            Begin
-          </button>
-        </div>
-      ) : (
-        // Chart Screen
-        <div ref={contentRef} className="min-h-screen bg-white">
-          <main className="flex flex-col items-center justify-center py-8 px-4">
-            <h2 className="text-3xl font-bold mb-4">
-              Dynamic Comparison Chart
-            </h2>
-            <div className="flex flex-wrap lg:flex-nowrap items-start justify-center gap-8">
-              {/* Chart Section */}
-              <div
-                className="flex-1 max-w-2xl lg:max-w-3xl"
-                style={{ height: "500px", overflow: "auto" }}
-              >
-                <label htmlFor="metric" className="mb-4 block text-center">
-                  <span className="font-bold text-lg">Choose Metric:</span>
-                  <select
-                    id="metric"
-                    value={selectedMetric}
-                    onChange={(e) => setSelectedMetric(e.target.value)}
-                    className="ml-2 p-2 border rounded bg-gray-100 shadow focus:ring focus:ring-blue-300"
-                  >
-                    <option value="yardage">Yardage</option>
-                    <option value="penalties">Penalties</option>
-                    <option value="twoPointConversions">
-                      2-Point Conversions
-                    </option>
-                  </select>
-                </label>
-                <Bar data={chartData} options={chartOptions} />
-              </div>
+      {/* Welcome Section */}
+      <div
+        ref={containerRef}
+        className="flex flex-col items-center justify-center h-screen bg-gray-50"
+      >
+        <h1 className="text-5xl font-bold text-red-800 mb-8">
+          Welcome to Chiefs Nation
+        </h1>
+        <p className="text-lg mb-6 text-center max-w-md">
+          Patrick Mahomes is our MVP. Check out his highlights!
+        </p>
+        <iframe
+          width="560"
+          height="315"
+          src="https://www.youtube.com/embed/qb61-Ep405k?si=9rN7N4gdtyyI9E5h"
+          title="YouTube video player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        ></iframe>
+      </div>
 
-              {/* Paragraph Section */}
-              <div className="flex-1 max-w-lg bg-gray-50 shadow-lg rounded-lg p-6">
-                <h3 className="text-xl font-bold mb-4">About the Chart</h3>
-                <p className="mb-4">
-                  This interactive tool allows you to analyze the Kansas City
-                  Chiefs' performance across different metrics, such as yardage,
-                  penalties, and two-point conversions. The Chiefs are
-                  highlighted for easy comparison.
-                </p>
-                <p>
-                  Use the dropdown menu to switch between metrics and explore
-                  the data in detail.
-                </p>
-              </div>
+      {/* Chart Section */}
+      <div ref={contentRef} className="min-h-screen bg-white">
+        <main className="flex flex-col items-center justify-center py-8 px-4">
+          <h2 className="text-3xl font-bold mb-4">Dynamic Comparison Chart</h2>
+          <div className="flex flex-wrap lg:flex-nowrap items-start justify-center gap-8">
+            {/* Chart Section */}
+            <div
+              className="flex-1 max-w-2xl lg:max-w-3xl"
+              style={{ height: "500px", overflow: "auto" }}
+            >
+              <label htmlFor="metric" className="mb-4 block text-center">
+                <span className="font-bold text-lg">Choose Metric:</span>
+                <select
+                  id="metric"
+                  value={selectedMetric}
+                  onChange={(e) => setSelectedMetric(e.target.value)}
+                  className="ml-2 p-2 border rounded bg-gray-100 shadow focus:ring focus:ring-blue-300"
+                >
+                  <option value="yardage">Yardage</option>
+                  <option value="penalties">Penalties</option>
+                  <option value="twoPointConversions">
+                    2-Point Conversions
+                  </option>
+                </select>
+              </label>
+              <Bar data={chartData} options={chartOptions} />
             </div>
-          </main>
-        </div>
-      )}
+
+            {/* Paragraph Section */}
+            <div className="flex-1 max-w-lg bg-gray-50 shadow-lg rounded-lg p-6">
+              <h3 className="text-xl font-bold mb-4">About the Chart</h3>
+              <p className="mb-4">
+                This interactive tool allows you to analyze the Kansas City
+                Chiefs' performance across different metrics, such as yardage,
+                penalties, and two-point conversions. The Chiefs are highlighted
+                for easy comparison.
+              </p>
+              <p>
+                Use the dropdown menu to switch between metrics and explore the
+                data in detail.
+              </p>
+            </div>
+          </div>
+        </main>
+      </div>
     </div>
   );
 };
