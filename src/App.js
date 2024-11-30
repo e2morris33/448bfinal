@@ -49,6 +49,28 @@ const App = () => {
     }
   }, [showChart]);
 
+  const [trivia, setTrivia] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const facts = [
+    "The Kansas City Chiefs were founded in 1960 as the Dallas Texans.",
+    "The Chiefs won their first Super Bowl in 1970, led by coach Hank Stram.",
+    "Arrowhead Stadium, the Chiefs' home, is one of the loudest stadiums in the NFL.",
+    "Patrick Mahomes became the youngest quarterback to win Super Bowl MVP in 2020.",
+    "The Chiefs have one of the longest streaks of sell-out games in NFL history.",
+    "Emma morris and Riely pittman are the coolest people ever",
+  ];
+
+  const fetchTrivia = () => {
+    setLoading(true); // Start loading
+    setTrivia(""); // Clear previous trivia
+    setTimeout(() => {
+      const randomIndex = Math.floor(Math.random() * facts.length);
+      setTrivia(facts[randomIndex]);
+      setLoading(false); // Stop loading
+    }, 2000); // Simulate a 2-second delay
+  };
+
   // Dynamic chart data
   const [selectedMetric, setSelectedMetric] = useState("yardage");
   const aggregatedData = [
@@ -124,11 +146,8 @@ const App = () => {
       {/* Header */}
       <header className="bg-red-600 text-white p-4 shadow-md">
         <div className="max-w-screen-xl mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Chiefs Nation</h1>
+          <h1 className="text-2xl font-bold">Chiefs Nation </h1>
           <nav className="flex space-x-6">
-            <a href="#" className="hover:text-yellow-300">
-              Home
-            </a>
             <a
               href="https://www.chiefs.com/team/players-roster"
               target="_blank"
@@ -146,31 +165,119 @@ const App = () => {
           </nav>
         </div>
       </header>
-
       {/* Welcome Section */}
       <div
         ref={containerRef}
-        className="flex flex-col items-center justify-center h-screen bg-gray-50"
+        className="welcome-section flex flex-col items-center justify-center h-screen"
+        style={{
+          backgroundImage: `url(${require("./field.jpg")})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          position: "relative",
+        }}
       >
-        <h1 className="text-5xl font-bold text-red-800 mb-8">
-          Welcome to Chiefs Nation
-        </h1>
-        <p className="text-lg mb-6 text-center max-w-md">
-          Patrick Mahomes is our MVP. Check out his highlights!
-        </p>
-        <iframe
-          width="560"
-          height="315"
-          src="https://www.youtube.com/embed/qb61-Ep405k?si=9rN7N4gdtyyI9E5h"
-          title="YouTube video player"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen
-        ></iframe>
-      </div>
+        <div
+          style={{
+            backgroundColor: "rgba(255, 255, 255)", // Semi-transparent white
+            padding: "2rem", // Add padding around the content
+            borderRadius: "12px", // Rounded corners
+            textAlign: "center",
+            maxWidth: "80%", // Limit the box width
+            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)", // Subtle shadow for depth
+          }}
+        >
+          <h1 className="text-5xl font-bold text-red-500 mb-4">
+            Welcome to Chiefs Nation
+          </h1>
+          <p className="text-lg text-black mb-4">
+            Patrick Mahomes is our MVP. Check out his highlights!
+          </p>
+          <iframe
+            width="560"
+            height="315"
+            src="https://www.youtube.com/embed/qb61-Ep405k?si=9rN7N4gdtyyI9E5h"
+            title="YouTube video player"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+          ></iframe>
+        </div>
 
-      {/* Chart Section */}
+        {/* Bouncing Scroll Arrow */}
+        <div
+          className="scroll-arrow"
+          onClick={() =>
+            window.scrollTo({ top: window.innerHeight, behavior: "smooth" })
+          }
+          style={{
+            position: "absolute",
+            bottom: "50px",
+            left: "50%",
+            transform: "translateX(-50%)",
+          }}
+        >
+          <img
+            src={require("./arrow.png")}
+            alt="Scroll Down"
+            style={{
+              width: "60px",
+              height: "auto",
+              animation: "bounce 2s infinite",
+              cursor: "pointer",
+            }}
+          />
+        </div>
+      </div>
+      <div
+        className="about-chiefs-section flex items-center justify-center min-h-screen px-8"
+        style={{
+          backgroundColor: "#f5f5f5", // Light background for contrast
+        }}
+      >
+        <div className="about-chiefs-section">
+          {/* Left Panel */}
+          <div className="left-panel" ref={containerRef}>
+            <h2 className="about-header">About the Chiefs</h2>
+            <p className="about-description"></p>
+          </div>
+
+          {/* Main Content */}
+          <div className="main-content">
+            <p>
+              The Kansas City Chiefs are a cornerstone of the NFL, blending a
+              storied legacy with modern-day dominance. Since their founding in
+              1960, the Chiefs have become a symbol of excellence, securing
+              multiple Super Bowl championships and fostering a passionate fan
+              base. Known for their high-powered offense, innovative strategies,
+              and the unmatched atmosphere of Arrowhead Stadium, the Chiefs
+              continue to inspire loyalty and pride in Kansas City and beyond.
+              Whether on the field or in the community, the Chiefs embody
+              teamwork, perseverance, and the relentless pursuit of greatness.
+            </p>
+          </div>
+        </div>
+
+        {/* Right Trivia Button and Spinner */}
+        <div className="w-1/2 flex flex-col items-center">
+          <button
+            onClick={fetchTrivia}
+            className="bg-red-600 text-white font-bold py-2 px-4 rounded-full hover:bg-red-800 transition"
+            disabled={loading} // Disable button while loading
+          >
+            Show Chiefs Trivia
+          </button>
+          {loading && (
+            <div className="spinner mt-4"></div> // Spinner animation while loading
+          )}
+          {!loading && trivia && (
+            <div className="trivia-card bg-white mt-4 p-4 rounded shadow-md">
+              <p className="text-lg">{trivia}</p>
+            </div>
+          )}
+        </div>
+      </div>
+      Chart Section
       <div ref={contentRef} className="min-h-screen bg-white">
         <main className="flex flex-col items-center justify-center py-8 px-4">
           <h2 className="text-3xl font-bold mb-4">Dynamic Comparison Chart</h2>
