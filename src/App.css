@@ -188,3 +188,30 @@ button:hover {
 .about-chiefs-section {
   margin-top: 0;
 }
+.right-sidebar {
+  background-color: #ffc107; /* Chiefs yellow */
+  height: 100%;
+  width: 50%; /* Occupy half the screen */
+  position: sticky;
+  top: 0;
+  transition: transform 1s ease, opacity 1s ease;
+}
+/* Parallax Section */
+.parallax {
+  position: relative;
+  height: 100vh; /* Full viewport height */
+  background-image: url("random.jpg"); /* Replace with your image URL */
+  background-attachment: fixed; /* Key property for parallax effect */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* Content inside parallax section */
+.parallax-content {
+  position: relative;
+  text-align: center;
+  color: white;
+  z-index: 10; /* Ensure content stays on top */
+  padding: 20px;
+}
