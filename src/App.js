@@ -26,7 +26,39 @@ const App = () => {
   const [showChart, setShowChart] = useState(false); // Toggle between screens
   const containerRef = useRef(null); // Ref for fade-out animation
   const contentRef = useRef(null); // Ref for fade-in animation of chart screen
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [trivia, setTrivia] = useState("");
+  const [loading, setLoading] = useState(false);
 
+  // Add this near your other state declarations
+  const [hasScrolledToAbout, setHasScrolledToAbout] = useState(false);
+  const aboutSectionRef = useRef(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const aboutSection = aboutSectionRef.current;
+      if (!aboutSection) return;
+
+      const rect = aboutSection.getBoundingClientRect();
+      const sectionHeight = aboutSection.offsetHeight;
+      const viewportHeight = window.innerHeight;
+
+      // Calculate progress (0 to 1)
+      const progress = Math.max(
+        0,
+        Math.min(
+          1,
+          1 - (rect.top - viewportHeight * 0.25) / (sectionHeight * 0.5)
+        )
+      );
+
+      setScrollProgress(progress);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll(); // Check initial position
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   const handleBegin = () => {
     // GSAP fade-out animation
     gsap.to(containerRef.current, {
@@ -38,37 +70,22 @@ const App = () => {
     });
   };
 
-  useEffect(() => {
-    // Trigger fade-in animation for the chart screen
-    if (showChart) {
-      gsap.fromTo(
-        contentRef.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 1 }
-      );
-    }
-  }, [showChart]);
-
-  const [trivia, setTrivia] = useState("");
-  const [loading, setLoading] = useState(false);
-
   const facts = [
     "The Kansas City Chiefs were founded in 1960 as the Dallas Texans.",
     "The Chiefs won their first Super Bowl in 1970, led by coach Hank Stram.",
     "Arrowhead Stadium, the Chiefs' home, is one of the loudest stadiums in the NFL.",
     "Patrick Mahomes became the youngest quarterback to win Super Bowl MVP in 2020.",
     "The Chiefs have one of the longest streaks of sell-out games in NFL history.",
-    "Emma morris and Riely pittman are the coolest people ever",
   ];
 
   const fetchTrivia = () => {
-    setLoading(true); // Start loading
-    setTrivia(""); // Clear previous trivia
+    setLoading(true);
+    setTrivia("");
     setTimeout(() => {
       const randomIndex = Math.floor(Math.random() * facts.length);
       setTrivia(facts[randomIndex]);
-      setLoading(false); // Stop loading
-    }, 2000); // Simulate a 2-second delay
+      setLoading(false);
+    }, 1000);
   };
 
   // Dynamic chart data
@@ -230,51 +247,80 @@ const App = () => {
         </div>
       </div>
       <div
-        className="about-chiefs-section flex items-center justify-center min-h-screen px-8"
-        style={{
-          backgroundColor: "#f5f5f5", // Light background for contrast
-        }}
+        ref={aboutSectionRef}
+        className="relative h-screen flex items-center justify-center min-h-screen"
       >
-        <div className="about-chiefs-section">
-          {/* Left Panel */}
-          <div className="left-panel" ref={containerRef}>
-            <h2 className="about-header">About the Chiefs</h2>
-            <p className="about-description"></p>
-          </div>
-
-          {/* Main Content */}
-          <div className="main-content">
-            <p>
-              The Kansas City Chiefs are a cornerstone of the NFL, blending a
-              storied legacy with modern-day dominance. Since their founding in
-              1960, the Chiefs have become a symbol of excellence, securing
-              multiple Super Bowl championships and fostering a passionate fan
-              base. Known for their high-powered offense, innovative strategies,
-              and the unmatched atmosphere of Arrowhead Stadium, the Chiefs
-              continue to inspire loyalty and pride in Kansas City and beyond.
-              Whether on the field or in the community, the Chiefs embody
-              teamwork, perseverance, and the relentless pursuit of greatness.
-            </p>
+        {/* Animated left panel */}
+        <div
+          className="sticky left-0 top-0 h-screen bg-red-600 transition-all duration-1000 ease-in-out"
+          style={{
+            width: "50%",
+            transform: `translateX(${-100 * (1 - scrollProgress)}%)`,
+          }}
+        >
+          <div
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center transition-opacity duration-1000"
+            style={{ opacity: scrollProgress }}
+          >
+            <h2 className="text-white text-8xl font-bold whitespace-nowrap mb-4">
+              ABOUT
+            </h2>
+            <h2 className="text-white text-8xl font-bold whitespace-nowrap mb-4">
+              THE
+            </h2>
+            <h2 className="text-white text-8xl font-bold whitespace-nowrap">
+              CHIEFS
+            </h2>
           </div>
         </div>
 
-        {/* Right Trivia Button and Spinner */}
-        <div className="w-1/2 flex flex-col items-center">
-          <button
-            onClick={fetchTrivia}
-            className="bg-red-600 text-white font-bold py-2 px-4 rounded-full hover:bg-red-800 transition"
-            disabled={loading} // Disable button while loading
+        {/* Right content */}
+        <div className="w-1/2 ml-auto p-12">
+          <div
+            className="space-y-8 transition-all duration-1000 delay-500"
+            style={{
+              opacity: scrollProgress,
+              transform: `translateX(${50 * (1 - scrollProgress)}px)`,
+            }}
           >
-            Show Chiefs Trivia
-          </button>
-          {loading && (
-            <div className="spinner mt-4"></div> // Spinner animation while loading
-          )}
-          {!loading && trivia && (
-            <div className="trivia-card bg-white mt-4 p-4 rounded shadow-md">
-              <p className="text-lg">{trivia}</p>
+            <div className="prose prose-lg">
+              <p className="text-gray-800 text-lg leading-relaxed">
+                The Kansas City Chiefs are a professional football team with a
+                rich history and a strong tradition of excellence. Established
+                in 1960, the Chiefs are a cornerstone of the NFL, known for
+                their passionate fan base, electrifying gameplay, and commitment
+                to community. The team boasts a legacy of championship success,
+                including multiple Super Bowl victories, and features some of
+                the league's most iconic players and coaches. Based in Kansas
+                City, Missouri, the Chiefs bring energy and pride to the field
+                every game day, uniting fans across the nation in their pursuit
+                of greatness. Whether on the field or off, the Chiefs exemplify
+                teamwork, resilience, and a dedication to the sport they love.
+                {/* rest of your paragraph text */}
+              </p>
             </div>
-          )}
+
+            {/* Trivia Section */}
+            <div className="w-full flex flex-col items-start">/Users
+              <button
+                onClick={fetchTrivia}
+                className="bg-red-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-red-700 transition-colors duration-200"
+                disabled={loading}
+              >
+                Show Chiefs Trivia
+              </button>
+
+              {loading && (
+                <div className="w-8 h-8 mt-4 border-4 border-red-600 border-t-transparent rounded-full animate-spin" />
+              )}
+
+              {!loading && trivia && (
+                <div className="w-full mt-4 p-6 bg-white rounded-lg shadow-md transition-all duration-300">
+                  <p className="text-lg text-gray-700">{trivia}</p>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
       Chart Section
