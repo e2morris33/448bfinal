@@ -29,10 +29,38 @@ const App = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [trivia, setTrivia] = useState("");
   const [loading, setLoading] = useState(false);
+  const [rightScrollProgress, setRightScrollProgress] = useState(0);
+  const rightSectionRef = useRef(null);
 
   // Add this near your other state declarations
   const [hasScrolledToAbout, setHasScrolledToAbout] = useState(false);
   const aboutSectionRef = useRef(null);
+
+  useEffect(() => {
+    const handleRightScroll = () => {
+      const rightSection = rightSectionRef.current;
+      if (!rightSection) return;
+
+      const rect = rightSection.getBoundingClientRect();
+      const sectionHeight = rightSection.offsetHeight;
+      const viewportHeight = window.innerHeight;
+
+      // Calculate progress (0 to 1)
+      const progress = Math.max(
+        0,
+        Math.min(
+          1,
+          1 - (rect.top - viewportHeight * 0.25) / (sectionHeight * 0.5)
+        )
+      );
+
+      setRightScrollProgress(progress);
+    };
+
+    window.addEventListener("scroll", handleRightScroll);
+    handleRightScroll(); // Initial check
+    return () => window.removeEventListener("scroll", handleRightScroll);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -59,6 +87,7 @@ const App = () => {
     handleScroll(); // Check initial position
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
   const handleBegin = () => {
     // GSAP fade-out animation
     gsap.to(containerRef.current, {
@@ -301,13 +330,13 @@ const App = () => {
             </div>
 
             {/* Trivia Section */}
-            <div className="w-full flex flex-col items-start">
+            <div className="w-full flex flex-col items-center">
               <button
                 onClick={fetchTrivia}
-                className="bg-red-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-red-700 transition-colors duration-200"
+                className="bg-red-600 text-white font-bold py-3 px-6 rounded-full hover:bg-red-700 transition-colors duration-200"
                 disabled={loading}
               >
-                Show Chiefs Trivia
+                Press for fun fact!
               </button>
 
               {loading && (
@@ -320,6 +349,34 @@ const App = () => {
                 </div>
               )}
             </div>
+          </div>
+        </div>
+      </div>
+      {/* Right Sidebar Section */}
+      <div
+        ref={rightSectionRef}
+        className="relative h-screen flex items-center justify-center min-h-screen"
+      >
+        <div
+          className="sticky right-0 top-0 h-screen bg-yellow-500 transition-all duration-1000 ease-in-out"
+          style={{
+            width: "50%", // Sidebar width is 50% of the screen
+            transform: `translateX(${50 + 50 * (1 - rightScrollProgress)}%)`,
+          }}
+        >
+          <div
+            className="absolute right-1/2 top-1/2 translate-x-1/2 -translate-y-1/2 text-center transition-opacity duration-1000"
+            style={{ opacity: rightScrollProgress }}
+          >
+            <h2 className="text-black text-8xl font-bold whitespace-nowrap mb-4">
+              RIGHT
+            </h2>
+            <h2 className="text-black text-8xl font-bold whitespace-nowrap mb-4">
+              SIDE
+            </h2>
+            <h2 className="text-black text-8xl font-bold whitespace-nowrap">
+              BAR
+            </h2>
           </div>
         </div>
       </div>
@@ -363,6 +420,15 @@ const App = () => {
               <p>
                 Use the dropdown menu to switch between metrics and explore the
                 data in detail.
+              </p>
+            </div>
+          </div>
+          <div className="parallax">
+            <div className="parallax-content">
+              <h1 className="text-5xl font-bold">Parallax Effect</h1>
+              <p className="text-lg mt-4">
+                Experience the depth as the background moves slower than the
+                content.
               </p>
             </div>
           </div>
