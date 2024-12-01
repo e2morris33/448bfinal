@@ -31,10 +31,22 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [rightScrollProgress, setRightScrollProgress] = useState(0);
   const rightSectionRef = useRef(null);
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [popupText, setPopupText] = useState("");
 
   // Add this near your other state declarations
   const [hasScrolledToAbout, setHasScrolledToAbout] = useState(false);
   const aboutSectionRef = useRef(null);
+
+  const handleFootballClick = (text) => {
+    setPopupText(text);
+    setIsPopupVisible(true);
+  };
+
+  const closePopup = () => {
+    setIsPopupVisible(false);
+    setPopupText("");
+  };
 
   useEffect(() => {
     const handleRightScroll = () => {
@@ -216,7 +228,7 @@ const App = () => {
         ref={containerRef}
         className="welcome-section flex flex-col items-center justify-center h-screen"
         style={{
-          backgroundImage: `url(${require("./field.jpg")})`,
+          backgroundImage: `url(${require("./images/field.jpg")})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           position: "relative",
@@ -243,7 +255,6 @@ const App = () => {
             height="315"
             src="https://www.youtube.com/embed/qb61-Ep405k?si=9rN7N4gdtyyI9E5h"
             title="YouTube video player"
-            frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             referrerPolicy="strict-origin-when-cross-origin"
             allowFullScreen
@@ -252,27 +263,32 @@ const App = () => {
 
         {/* Bouncing Scroll Arrow */}
         <div
-          className="scroll-arrow"
+          className="absolute bottom-12 left-1/2 transform -translate-x-1/2 cursor-pointer z-10"
           onClick={() =>
             window.scrollTo({ top: window.innerHeight, behavior: "smooth" })
           }
-          style={{
-            position: "absolute",
-            bottom: "50px",
-            left: "50%",
-            transform: "translateX(-50%)",
-          }}
         >
-          <img
-            src={require("./arrow.png")}
-            alt="Scroll Down"
+          <div
+            className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-lg hover:bg-gray-100 transition-colors"
             style={{
-              width: "60px",
-              height: "auto",
               animation: "bounce 2s infinite",
-              cursor: "pointer",
             }}
-          />
+          >
+            <svg
+              className="w-6 h-6 text-red-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 14l-7 7m0 0l-7-7m7 7V3"
+              />
+            </svg>
+          </div>
         </div>
       </div>
       <div
@@ -291,14 +307,8 @@ const App = () => {
             className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center transition-opacity duration-1000"
             style={{ opacity: scrollProgress }}
           >
-            <h2 className="text-white text-8xl font-bold whitespace-nowrap mb-4">
-              ABOUT
-            </h2>
-            <h2 className="text-white text-8xl font-bold whitespace-nowrap mb-4">
-              THE
-            </h2>
-            <h2 className="text-white text-8xl font-bold whitespace-nowrap">
-              CHIEFS
+            <h2 className="text-white text-6xl font-bold mb-8 whitespace-nowrap">
+              About the Chiefs
             </h2>
           </div>
         </div>
@@ -313,7 +323,7 @@ const App = () => {
             }}
           >
             <div className="prose prose-lg">
-              <p className="text-gray-800 text-lg leading-relaxed">
+              <p className="text-black-800 text-lg leading-relaxed">
                 The Kansas City Chiefs are a professional football team with a
                 rich history and a strong tradition of excellence. Established
                 in 1960, the Chiefs are a cornerstone of the NFL, known for
@@ -352,36 +362,97 @@ const App = () => {
           </div>
         </div>
       </div>
-      {/* Right Sidebar Section */}
-      <div
-        ref={rightSectionRef}
-        className="relative h-screen flex items-center justify-center min-h-screen"
-      >
+      <div className="relative h-screen flex">
+        {/* Left Section */}
+        <div className="w-1/2 h-screen bg-gray-100 flex items-center justify-center p-8">
+          <div className="max-w-xl text-center">
+            <div className="flex justify-center items-center gap-0 mb-8">
+              <img
+                src={require("./images/trophy.png")}
+                alt="Super Bowl Trophy"
+                className="w-32 h-auto"
+              />
+              <img
+                src={require("./images/trophy.png")}
+                alt="Super Bowl Trophy"
+                className="w-32 h-auto"
+              />
+              <img
+                src={require("./images/trophy.png")}
+                alt="Super Bowl Trophy"
+                className="w-32 h-auto"
+              />
+            </div>
+            <p className="text-black text-xl mb-8 mx-auto max-w-prose">
+              The Chiefs have claimed three Super Bowl championships since 2020,
+              cementing their place as one of the NFL's most dominant teams.
+            </p>
+            <p className="text-black text-xl font-bold mt-8 mx-auto max-w-prose">
+              What makes them so successful in recent years?
+            </p>
+          </div>
+        </div>
+
+        {/* Right Section */}
         <div
-          className="sticky right-0 top-0 h-screen bg-yellow-500 transition-all duration-1000 ease-in-out"
-          style={{
-            width: "50%", // Sidebar width is 50% of the screen
-            transform: `translateX(${50 + 50 * (1 - rightScrollProgress)}%)`,
-          }}
+          ref={rightSectionRef}
+          className="relative w-1/2 h-screen flex items-center justify-center min-h-screen"
         >
           <div
-            className="absolute right-1/2 top-1/2 translate-x-1/2 -translate-y-1/2 text-center transition-opacity duration-1000"
-            style={{ opacity: rightScrollProgress }}
+            className="sticky right-0 top-0 h-screen bg-red-600 transition-all duration-1000 ease-in-out"
+            style={{
+              width: "100%",
+              transform: `translateX(${100 * (1 - rightScrollProgress)}%)`,
+            }}
           >
-            <h2 className="text-black text-8xl font-bold whitespace-nowrap mb-4">
-              RIGHT
-            </h2>
-            <h2 className="text-black text-8xl font-bold whitespace-nowrap mb-4">
-              SIDE
-            </h2>
-            <h2 className="text-black text-8xl font-bold whitespace-nowrap">
-              BAR
-            </h2>
+            <div
+              className="absolute right-1/2 top-1/2 translate-x-1/2 -translate-y-1/2 text-center transition-opacity duration-1000"
+              style={{ opacity: rightScrollProgress }}
+            >
+              <h2 className="text-white text-6xl font-bold mb-8 whitespace-nowrap">
+                Super Bowls
+              </h2>
+            </div>
+          </div>
+        </div>
+
+        {/* Scroll Arrow */}
+        <div
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 cursor-pointer z-10"
+          onClick={() => {
+            const chartSection = document.querySelector("#chart-section");
+            if (chartSection) {
+              chartSection.scrollIntoView({ behavior: "smooth" });
+            }
+          }}
+          style={{
+            animation: "bounce 2s infinite",
+          }}
+        >
+          <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-lg hover:bg-gray-100 transition-colors">
+            <svg
+              className="w-6 h-6 text-red-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 14l-7 7m0 0l-7-7m7 7V3"
+              />
+            </svg>
           </div>
         </div>
       </div>
-      Chart Section
-      <div ref={contentRef} className="min-h-screen bg-white">
+
+      <div
+        ref={contentRef}
+        className="min-h-screen bg-gray-100"
+        id="chart-section"
+      >
         <main className="flex flex-col items-center justify-center py-8 px-4">
           <h2 className="text-3xl font-bold mb-4">Dynamic Comparison Chart</h2>
           <div className="flex flex-wrap lg:flex-nowrap items-start justify-center gap-8">
@@ -434,6 +505,46 @@ const App = () => {
           </div>
         </main>
       </div>
+      {/* Football Grid Section */}
+      <div className="relative h-screen flex flex-col items-center justify-center bg-gray-100">
+        <h2 className="text-4xl font-bold text-center mt-12 mb-6">
+          Click on a football to view their stats!
+        </h2>
+        <div className="grid grid-cols-3 gap-6">
+          {Array(6)
+            .fill(null)
+            .map((_, index) => (
+              <div
+                key={index}
+                className="cursor-pointer"
+                onClick={() =>
+                  handleFootballClick(`This is football #${index + 1}.`)
+                }
+              >
+                <img
+                  src={require("./images/football.png")}
+                  alt={`Football ${index + 1}`}
+                  className="w-24 h-auto rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                />
+              </div>
+            ))}
+        </div>
+      </div>
+
+      {/* Popup */}
+      {isPopupVisible && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-12 w-96 h-80 rounded-lg shadow-lg relative">
+            <button
+              onClick={closePopup}
+              className="absolute top-2 right-2 text-black text-lg font-bold"
+            >
+              &times;
+            </button>
+            <p className="text-lg">{popupText}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
