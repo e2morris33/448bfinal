@@ -12,6 +12,11 @@ import { Bar } from "react-chartjs-2";
 import { gsap } from "gsap";
 import "./App.css";
 
+import mahomesImg from "./images/mahomes.png";
+import burrowImg from "./images/burrow.png";
+import jacksonImg from "./images/jackson.png";
+import footballImg from "./images/football.png";
+
 // Register Chart.js components
 ChartJS.register(
   CategoryScale,
@@ -34,9 +39,33 @@ const App = () => {
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [popupText, setPopupText] = useState("");
 
-  // Add this near your other state declarations
   const [hasScrolledToAbout, setHasScrolledToAbout] = useState(false);
   const aboutSectionRef = useRef(null);
+  const [selectedQB, setSelectedQB] = useState(null);
+
+  const qbData = [
+    {
+      name: "Patrick Mahomes",
+      playoffYards: 1051,
+      image: mahomesImg,
+    },
+    {
+      name: "Joe Burrow",
+      playoffYards: 0,
+      image: burrowImg,
+    },
+    {
+      name: "Lamar Jackson",
+      playoffYards: 452,
+      image: jacksonImg,
+    },
+  ];
+
+  // Calculate football position based on yards
+  const getFootballPosition = (yards) => {
+    // Scale yards to pixels (1 yard = 0.3 pixels for visualization)
+    return Math.min(yards * 0.3, 400); // Cap at 400px
+  };
 
   const handleFootballClick = (text) => {
     setPopupText(text);
@@ -505,6 +534,7 @@ const App = () => {
           </div>
         </main>
       </div>
+
       {/* Football Grid Section */}
       <div className="relative h-screen flex flex-col items-center justify-center bg-gray-100">
         <h2 className="text-4xl font-bold text-center mt-12 mb-6">
@@ -545,6 +575,63 @@ const App = () => {
           </div>
         </div>
       )}
+
+      {/* QB Comparison */}
+      <div className="w-full max-w-6xl mx-auto p-8 bg-gray-100">
+        <h2 className="text-4xl font-bold text-center mb-12">
+          2023 Playoff Quarterback Stats
+        </h2>
+
+        <div className="space-y-12">
+          {qbData.map((qb, index) => (
+            <div key={index} className="relative">
+              <div className="flex items-center space-x-8">
+                {/* QB Info Section */}
+                <div
+                  className="flex items-center cursor-pointer space-x-6"
+                  onClick={() =>
+                    setSelectedQB(qb.name === selectedQB ? null : qb.name)
+                  }
+                >
+                  {/* QB Image */}
+                  <img
+                    src={qb.image}
+                    alt={qb.name}
+                    className="w-48 h-64 object-cover rounded-lg shadow-lg"
+                  />
+                  <h3 className="text-2xl font-semibold">{qb.name}</h3>
+                </div>
+
+                {/* Football Animation Section */}
+                <div className="flex-grow relative h-16">
+                  <div
+                    className={`absolute top-1/2 -translate-y-1/2 transition-all duration-1000 ease-in-out`}
+                    style={{
+                      left:
+                        selectedQB === qb.name
+                          ? `${getFootballPosition(qb.playoffYards)}px`
+                          : "0px",
+                    }}
+                  >
+                    <img
+                      src={footballImg}
+                      alt="Football"
+                      className="w-12 h-auto"
+                    />
+                  </div>
+
+                  {/* Yards display */}
+                  {selectedQB === qb.name && (
+                    <div className="absolute top-full left-0 mt-2 text-lg font-semibold">
+                      {qb.playoffYards} yards
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
