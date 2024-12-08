@@ -9,13 +9,18 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
+
 import { gsap } from "gsap";
+import { motion } from "framer-motion";
 import "./App.css";
 
 import mahomesImg from "./images/mahomes.png";
 import burrowImg from "./images/burrow.png";
 import jacksonImg from "./images/jackson.png";
 import footballImg from "./images/football.png";
+
+import { Trophy, TrendingUp, Flag, Activity } from "lucide-react";
+import { Star, Crown } from "lucide-react";
 
 // Register Chart.js components
 ChartJS.register(
@@ -28,9 +33,9 @@ ChartJS.register(
 );
 
 const App = () => {
-  const [showChart, setShowChart] = useState(false); // Toggle between screens
-  const containerRef = useRef(null); // Ref for fade-out animation
-  const contentRef = useRef(null); // Ref for fade-in animation of chart screen
+  const [showChart, setShowChart] = useState(false);
+  const containerRef = useRef(null);
+  const contentRef = useRef(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [trivia, setTrivia] = useState("");
   const [loading, setLoading] = useState(false);
@@ -38,10 +43,10 @@ const App = () => {
   const rightSectionRef = useRef(null);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [popupText, setPopupText] = useState("");
-
   const [hasScrolledToAbout, setHasScrolledToAbout] = useState(false);
   const aboutSectionRef = useRef(null);
   const [selectedQB, setSelectedQB] = useState(null);
+  const [selectedMetric, setSelectedMetric] = useState("yardage");
 
   const qbData = [
     {
@@ -61,10 +66,8 @@ const App = () => {
     },
   ];
 
-  // Calculate football position based on yards
   const getFootballPosition = (yards) => {
-    // Scale yards to pixels (1 yard = 0.3 pixels for visualization)
-    return Math.min(yards * 0.3, 400); // Cap at 400px
+    return Math.min(yards * 0.85, 800);
   };
 
   const handleFootballClick = (text) => {
@@ -86,7 +89,6 @@ const App = () => {
       const sectionHeight = rightSection.offsetHeight;
       const viewportHeight = window.innerHeight;
 
-      // Calculate progress (0 to 1)
       const progress = Math.max(
         0,
         Math.min(
@@ -99,7 +101,7 @@ const App = () => {
     };
 
     window.addEventListener("scroll", handleRightScroll);
-    handleRightScroll(); // Initial check
+    handleRightScroll();
     return () => window.removeEventListener("scroll", handleRightScroll);
   }, []);
 
@@ -112,7 +114,6 @@ const App = () => {
       const sectionHeight = aboutSection.offsetHeight;
       const viewportHeight = window.innerHeight;
 
-      // Calculate progress (0 to 1)
       const progress = Math.max(
         0,
         Math.min(
@@ -125,20 +126,9 @@ const App = () => {
     };
 
     window.addEventListener("scroll", handleScroll);
-    handleScroll(); // Check initial position
+    handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const handleBegin = () => {
-    // GSAP fade-out animation
-    gsap.to(containerRef.current, {
-      opacity: 0,
-      duration: 1,
-      onComplete: () => {
-        setShowChart(true); // Switch to the chart screen
-      },
-    });
-  };
 
   const facts = [
     "The Kansas City Chiefs were founded in 1960 as the Dallas Texans.",
@@ -158,8 +148,16 @@ const App = () => {
     }, 1000);
   };
 
-  // Dynamic chart data
-  const [selectedMetric, setSelectedMetric] = useState("yardage");
+  const handleBegin = () => {
+    gsap.to(containerRef.current, {
+      opacity: 0,
+      duration: 1,
+      onComplete: () => {
+        setShowChart(true);
+      },
+    });
+  };
+
   const aggregatedData = [
     { team: "ARI", yardage: 38995, penalties: 106, twoPointConversions: 14 },
     { team: "ATL", yardage: 39473, penalties: 90, twoPointConversions: 5 },
@@ -231,9 +229,9 @@ const App = () => {
   return (
     <div className="min-h-screen bg-gray-100 text-gray-800">
       {/* Header */}
-      <header className="bg-red-600 text-white p-4 shadow-md">
-        <div className="max-w-screen-xl mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Chiefs Nation </h1>
+      <header className="bg-red-600 text-white ">
+        <div className="max-w-screen-xl mx-auto flex justify-between items-center p-4">
+          <h1 className="text-2xl font-bold">Chiefs Nation</h1>
           <nav className="flex space-x-6">
             <a
               href="https://www.chiefs.com/team/players-roster"
@@ -252,79 +250,85 @@ const App = () => {
           </nav>
         </div>
       </header>
+
       {/* Welcome Section */}
       <div
         ref={containerRef}
-        className="welcome-section flex flex-col items-center justify-center h-screen"
+        className="welcome-section relative min-h-screen flex flex-col items-center justify-center p-4 pt-24"
         style={{
-          backgroundImage: `url(${require("./images/field.jpg")})`,
+          backgroundImage: `
+      linear-gradient(to bottom, 
+        rgba(0, 0, 0, 0.7) 0%,
+        rgba(0, 0, 0, 0.5) 50%,
+        rgba(180, 30, 30, 0.3) 100%
+      ),
+      url(${require("./images/field.jpg")})
+    `,
           backgroundSize: "cover",
           backgroundPosition: "center",
-          position: "relative",
+          backgroundAttachment: "fixed",
         }}
       >
-        <div
-          style={{
-            backgroundColor: "rgba(255, 255, 255)", // Semi-transparent white
-            padding: "2rem", // Add padding around the content
-            borderRadius: "12px", // Rounded corners
-            textAlign: "center",
-            maxWidth: "80%", // Limit the box width
-            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)", // Subtle shadow for depth
-          }}
-        >
-          <h1 className="text-5xl font-bold text-red-500 mb-4">
+        <div className="max-w-4xl w-full bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 space-y-6">
+          <h1 className="text-5xl font-bold text-red-600 text-center mb-6">
             Welcome to Chiefs Nation
           </h1>
-          <p className="text-lg text-black mb-4">
-            Patrick Mahomes is our MVP. Check out his highlights!
-          </p>
-          <iframe
-            width="560"
-            height="315"
-            src="https://www.youtube.com/embed/qb61-Ep405k?si=9rN7N4gdtyyI9E5h"
-            title="YouTube video player"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
-          ></iframe>
-        </div>
 
-        {/* Bouncing Scroll Arrow */}
-        <div
-          className="absolute bottom-12 left-1/2 transform -translate-x-1/2 cursor-pointer z-10"
-          onClick={() =>
-            window.scrollTo({ top: window.innerHeight, behavior: "smooth" })
-          }
-        >
-          <div
-            className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-lg hover:bg-gray-100 transition-colors"
-            style={{
-              animation: "bounce 2s infinite",
-            }}
-          >
-            <svg
-              className="w-6 h-6 text-red-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
+            <div className="flex flex-col items-center p-4 bg-red-50 rounded-lg shadow-sm">
+              <Trophy className="w-12 h-12 text-red-600 mb-2" />
+              <h3 className="text-xl font-bold text-gray-800">3x Champions</h3>
+              <p className="text-center text-gray-600 text-sm">
+                Super Bowl Victories since 2020
+              </p>
+            </div>
+
+            <div className="flex flex-col items-center p-4 bg-red-50 rounded-lg shadow-sm">
+              <Crown className="w-12 h-12 text-red-600 mb-2" />
+              <h3 className="text-xl font-bold text-gray-800">
+                Patrick Mahomes
+              </h3>
+              <p className="text-center text-gray-600 text-sm">2x NFL MVP</p>
+            </div>
+
+            <div className="flex flex-col items-center p-4 bg-red-50 rounded-lg shadow-sm">
+              <Star className="w-12 h-12 text-red-600 mb-2" />
+              <h3 className="text-xl font-bold text-gray-800">8 Straight</h3>
+              <p className="text-center text-gray-600 text-sm">
+                Division Championships
+              </p>
+            </div>
+          </div>
+
+          <div className="text-center space-y-4">
+            <h2 className="text-2xl font-bold text-gray-800">
+              Dynasty in the Making
+            </h2>
+            <p className="text-gray-600">
+              Experience the excitement of Chiefs Kingdom, where tradition meets
+              excellence. Led by Patrick Mahomes and coached by Andy Reid, we're
+              writing NFL history.
+            </p>
+          </div>
+
+          <div className="flex justify-center gap-4 mt-6">
+            <button
+              onClick={() =>
+                window.scrollTo({ top: window.innerHeight, behavior: "smooth" })
+              }
+              className="px-6 py-3 bg-red-600 text-white font-bold rounded-full hover:bg-red-700 transition-colors"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 14l-7 7m0 0l-7-7m7 7V3"
-              />
-            </svg>
+              Explore Our Journey
+            </button>
           </div>
         </div>
       </div>
+
+      {/* About Section */}
       <div
         ref={aboutSectionRef}
-        className="relative h-screen flex items-center justify-center min-h-screen"
+        className="relative h-screen flex items-center justify-center min-h-screen bg-gradient-to-b from-gray-900 to-red-900"
       >
-        {/* Animated left panel */}
         <div
           className="sticky left-0 top-0 h-screen bg-red-600 transition-all duration-1000 ease-in-out"
           style={{
@@ -342,7 +346,6 @@ const App = () => {
           </div>
         </div>
 
-        {/* Right content */}
         <div className="w-1/2 ml-auto p-12">
           <div
             className="space-y-8 transition-all duration-1000 delay-500"
@@ -352,7 +355,7 @@ const App = () => {
             }}
           >
             <div className="prose prose-lg">
-              <p className="text-black-800 text-lg leading-relaxed">
+              <p className="text-white text-lg leading-relaxed">
                 The Kansas City Chiefs are a professional football team with a
                 rich history and a strong tradition of excellence. Established
                 in 1960, the Chiefs are a cornerstone of the NFL, known for
@@ -362,9 +365,7 @@ const App = () => {
                 the league's most iconic players and coaches. Based in Kansas
                 City, Missouri, the Chiefs bring energy and pride to the field
                 every game day, uniting fans across the nation in their pursuit
-                of greatness. Whether on the field or off, the Chiefs exemplify
-                teamwork, resilience, and a dedication to the sport they love.
-                {/* rest of your paragraph text */}
+                of greatness.
               </p>
             </div>
 
@@ -372,7 +373,7 @@ const App = () => {
             <div className="w-full flex flex-col items-center">
               <button
                 onClick={fetchTrivia}
-                className="bg-red-600 text-white font-bold py-3 px-6 rounded-full hover:bg-red-700 transition-colors duration-200"
+                className="bg-red-600 text-white font-bold py-3 px-6 rounded-full hover:bg-red-700 transition-colors duration-200 hover:scale-105 transform"
                 disabled={loading}
               >
                 Press for fun fact!
@@ -383,46 +384,41 @@ const App = () => {
               )}
 
               {!loading && trivia && (
-                <div className="w-full mt-4 p-6 bg-white rounded-lg shadow-md transition-all duration-300">
-                  <p className="text-lg text-gray-700">{trivia}</p>
+                <div className="w-full mt-4 p-6 bg-white/10 backdrop-blur-sm rounded-lg shadow-lg transition-all duration-300">
+                  <p className="text-lg text-white">{trivia}</p>
                 </div>
               )}
             </div>
           </div>
         </div>
       </div>
-      <div className="relative h-screen flex">
-        {/* Left Section */}
-        <div className="w-1/2 h-screen bg-gray-100 flex items-center justify-center p-8">
+
+      {/* Trophy Section */}
+      <div className="relative min-h-screen bg-gradient-to-b from-red-900 to-gray-900 flex">
+        <div className="w-1/2 h-screen flex items-center justify-center p-8">
           <div className="max-w-xl text-center">
-            <div className="flex justify-center items-center gap-0 mb-8">
-              <img
-                src={require("./images/trophy.png")}
-                alt="Super Bowl Trophy"
-                className="w-32 h-auto"
-              />
-              <img
-                src={require("./images/trophy.png")}
-                alt="Super Bowl Trophy"
-                className="w-32 h-auto"
-              />
-              <img
-                src={require("./images/trophy.png")}
-                alt="Super Bowl Trophy"
-                className="w-32 h-auto"
-              />
+            <div className="flex justify-center items-center gap-4 mb-12 transform hover:scale-105 transition-transform">
+              {[1, 2, 3].map((index) => (
+                <div key={index} className="relative group">
+                  <img
+                    src={require("./images/trophy.png")}
+                    alt="Super Bowl Trophy"
+                    className="w-32 h-auto transition-transform duration-300 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-red-500 opacity-0 group-hover:opacity-20 rounded-lg transition-opacity duration-300" />
+                </div>
+              ))}
             </div>
-            <p className="text-black text-xl mb-8 mx-auto max-w-prose">
+            <p className="text-white text-xl mb-8 mx-auto max-w-prose leading-relaxed">
               The Chiefs have claimed three Super Bowl championships since 2020,
               cementing their place as one of the NFL's most dominant teams.
             </p>
-            <p className="text-black text-xl font-bold mt-8 mx-auto max-w-prose">
+            <p className="text-white text-2xl font-bold mt-8 mx-auto max-w-prose">
               What makes them so successful in recent years?
             </p>
           </div>
         </div>
 
-        {/* Right Section */}
         <div
           ref={rightSectionRef}
           className="relative w-1/2 h-screen flex items-center justify-center min-h-screen"
@@ -439,13 +435,13 @@ const App = () => {
               style={{ opacity: rightScrollProgress }}
             >
               <h2 className="text-white text-6xl font-bold mb-8 whitespace-nowrap">
-                Super Bowls
+                Championship Legacy
               </h2>
             </div>
           </div>
         </div>
 
-        {/* Scroll Arrow */}
+        {/* Scroll Arrow  */}
         <div
           className="absolute bottom-8 left-1/2 -translate-x-1/2 cursor-pointer z-10"
           onClick={() => {
@@ -454,13 +450,10 @@ const App = () => {
               chartSection.scrollIntoView({ behavior: "smooth" });
             }
           }}
-          style={{
-            animation: "bounce 2s infinite",
-          }}
         >
-          <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-lg hover:bg-gray-100 transition-colors">
+          <div className="w-16 h-16 rounded-full bg-red-600 flex items-center justify-center shadow-lg hover:bg-red-700 transition-all duration-300 hover:scale-110">
             <svg
-              className="w-6 h-6 text-red-600"
+              className="w-6 h-6 text-white"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -477,65 +470,277 @@ const App = () => {
         </div>
       </div>
 
+      {/* Chart Section */}
       <div
         ref={contentRef}
-        className="min-h-screen bg-gray-100"
+        className="min-h-screen bg-gradient-to-b from-gray-100 via-gray-200 to-gray-900 py-8 transition-all duration-1000"
         id="chart-section"
       >
-        <main className="flex flex-col items-center justify-center py-8 px-4">
-          <h2 className="text-3xl font-bold mb-4">Dynamic Comparison Chart</h2>
-          <div className="flex flex-wrap lg:flex-nowrap items-start justify-center gap-8">
-            {/* Chart Section */}
-            <div
-              className="flex-1 max-w-2xl lg:max-w-3xl"
-              style={{ height: "500px", overflow: "auto" }}
-            >
-              <label htmlFor="metric" className="mb-4 block text-center">
-                <span className="font-bold text-lg">Choose Metric:</span>
-                <select
-                  id="metric"
-                  value={selectedMetric}
-                  onChange={(e) => setSelectedMetric(e.target.value)}
-                  className="ml-2 p-2 border rounded bg-gray-100 shadow focus:ring focus:ring-blue-300"
-                >
-                  <option value="yardage">Yardage</option>
-                  <option value="penalties">Penalties</option>
-                  <option value="twoPointConversions">
-                    2-Point Conversions
-                  </option>
-                </select>
-              </label>
-              <Bar data={chartData} options={chartOptions} />
+        <div className="w-full max-w-6xl mx-auto p-4">
+          <div className="bg-white/90 backdrop-blur-sm rounded-lg shadow-xl transition-all duration-300">
+            <div className="p-4 border-b border-gray-200">
+              <div className="text-2xl font-bold text-red-600 flex items-center gap-2">
+                <Activity className="w-6 h-6" />
+                Chiefs Performance Analysis
+              </div>
             </div>
+            <div className="p-4">
+              {/* Metric Selection Tabs */}
+              <div className="flex space-x-2 mb-4">
+                {[
+                  {
+                    value: "yardage",
+                    label: "Total Yardage",
+                    icon: <TrendingUp className="w-5 h-5" />,
+                  },
+                  {
+                    value: "penalties",
+                    label: "Penalties",
+                    icon: <Flag className="w-5 h-5" />,
+                  },
+                  {
+                    value: "twoPointConversions",
+                    label: "2-Point Conversions",
+                    icon: <Trophy className="w-5 h-5" />,
+                  },
+                ].map((metric) => (
+                  <button
+                    key={metric.value}
+                    onClick={() => setSelectedMetric(metric.value)}
+                    className={`flex items-center gap-1 px-3 py-2 rounded-md transition-all duration-300 ${
+                      selectedMetric === metric.value
+                        ? "bg-red-600 text-white shadow-lg scale-105"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
+                  >
+                    {metric.icon}
+                    {metric.label}
+                  </button>
+                ))}
+              </div>
 
-            {/* Paragraph Section */}
-            <div className="flex-1 max-w-lg bg-gray-50 shadow-lg rounded-lg p-6">
-              <h3 className="text-xl font-bold mb-4">About the Chart</h3>
-              <p className="mb-4">
-                This interactive tool allows you to analyze the Kansas City
-                Chiefs' performance across different metrics, such as yardage,
-                penalties, and two-point conversions. The Chiefs are highlighted
-                for easy comparison.
-              </p>
-              <p>
-                Use the dropdown menu to switch between metrics and explore the
-                data in detail.
-              </p>
+              {/* Metric Content */}
+              {(() => {
+                const metricInfo = {
+                  yardage: {
+                    title: "Total Yardage",
+                    description:
+                      "Lower yardage with higher wins indicates offensive efficiency",
+                    format: (value) => `${value.toLocaleString()} yards`,
+                  },
+                  penalties: {
+                    title: "Penalties",
+                    description: "Fewer penalties show disciplined gameplay",
+                    format: (value) => `${value} penalties`,
+                  },
+                  twoPointConversions: {
+                    title: "2-Point Conversions",
+                    description: "Strategic scoring decisions",
+                    format: (value) => `${value} conversions`,
+                  },
+                };
+
+                const currentMetricInfo = metricInfo[selectedMetric];
+                const chiefsData = aggregatedData.find(
+                  (team) => team.team === "KC"
+                );
+                const sortedTeams = [...aggregatedData].sort(
+                  (a, b) => b[selectedMetric] - a[selectedMetric]
+                );
+                const rank =
+                  sortedTeams.findIndex((team) => team.team === "KC") + 1;
+                const leagueAvg =
+                  aggregatedData.reduce(
+                    (sum, team) => sum + team[selectedMetric],
+                    0
+                  ) / aggregatedData.length;
+                const percentDiff =
+                  ((chiefsData[selectedMetric] - leagueAvg) / leagueAvg) * 100;
+
+                return (
+                  <>
+                    <div className="grid md:grid-cols-3 gap-3 mb-4">
+                      <div className="bg-white rounded-lg p-4 border-2 border-red-100 shadow-sm transition-all duration-300 hover:shadow-md">
+                        <p className="text-sm font-medium text-gray-600">
+                          Chiefs {currentMetricInfo.title}
+                        </p>
+                        <p className="text-2xl font-bold text-red-600">
+                          {currentMetricInfo.format(chiefsData[selectedMetric])}
+                        </p>
+                      </div>
+                      <div className="bg-white rounded-lg p-4 border-2 border-red-100 shadow-sm transition-all duration-300 hover:shadow-md">
+                        <p className="text-sm font-medium text-gray-600">
+                          League Rank
+                        </p>
+                        <p className="text-2xl font-bold text-red-600">
+                          #{rank} of 32
+                        </p>
+                      </div>
+                      <div className="bg-white rounded-lg p-4 border-2 border-red-100 shadow-sm transition-all duration-300 hover:shadow-md">
+                        <p className="text-sm font-medium text-gray-600">
+                          vs League Average
+                        </p>
+                        <p
+                          className={`text-2xl font-bold ${
+                            percentDiff > 0 ? "text-green-600" : "text-red-600"
+                          }`}
+                        >
+                          {percentDiff > 0 ? "+" : ""}
+                          {percentDiff.toFixed(1)}%
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mb-3">
+                      <p className="text-gray-700 text-sm">
+                        {currentMetricInfo.description}
+                      </p>
+                    </div>
+                    <div className="h-[300px]">
+                      <Bar
+                        data={{
+                          labels: aggregatedData.map((row) => row.team),
+                          datasets: [
+                            {
+                              label: currentMetricInfo.title,
+                              data: aggregatedData.map(
+                                (row) => row[selectedMetric]
+                              ),
+                              backgroundColor: aggregatedData.map((row) =>
+                                row.team === "KC"
+                                  ? "rgba(220, 38, 38, 0.8)"
+                                  : "rgba(203, 213, 225, 0.6)"
+                              ),
+                              borderColor: aggregatedData.map((row) =>
+                                row.team === "KC"
+                                  ? "rgb(185, 28, 28)"
+                                  : "rgb(148, 163, 184)"
+                              ),
+                              borderWidth: 1,
+                            },
+                          ],
+                        }}
+                        options={{
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          plugins: {
+                            legend: {
+                              display: false,
+                            },
+                            tooltip: {
+                              callbacks: {
+                                label: (context) => {
+                                  return currentMetricInfo.format(context.raw);
+                                },
+                              },
+                            },
+                          },
+                          scales: {
+                            y: {
+                              beginAtZero: true,
+                              grid: {
+                                color: "rgba(203, 213, 225, 0.2)",
+                              },
+                              title: {
+                                display: true,
+                                text: currentMetricInfo.title,
+                                color: "rgb(75, 85, 99)",
+                                font: {
+                                  weight: "bold",
+                                },
+                              },
+                            },
+                            x: {
+                              grid: {
+                                display: false,
+                              },
+                              title: {
+                                display: true,
+                                text: "NFL Teams",
+                                color: "rgb(75, 85, 99)",
+                                font: {
+                                  weight: "bold",
+                                },
+                              },
+                            },
+                          },
+                        }}
+                      />
+                    </div>
+
+                    <div className="mt-8 space-y-4 p-6 bg-white/80 backdrop-blur-sm rounded-lg shadow-md">
+                      <h3 className="text-xl font-bold text-gray-800">
+                        Understanding the Chiefs' Efficiency
+                      </h3>
+
+                      <div className="space-y-4 text-gray-700">
+                        <p>
+                          The Kansas City Chiefs rank{" "}
+                          <span className="font-semibold text-red-600">
+                            #30 in total yardage
+                          </span>
+                          , yet they're one of the NFL's most successful teams.
+                          This seemingly contradictory stat actually
+                          demonstrates their exceptional offensive efficiency.
+                        </p>
+
+                        <div className="grid md:grid-cols-2 gap-6 mt-4">
+                          <div className="space-y-2">
+                            <h4 className="font-semibold text-gray-800">
+                              Why Lower Yardage Can Be Better
+                            </h4>
+                            <ul className="list-disc pl-5 space-y-1">
+                              <li>
+                                Shorter fields due to strong defensive
+                                performances
+                              </li>
+                              <li>
+                                Efficient red zone scoring (fewer yards needed)
+                              </li>
+                              <li>
+                                Strategic ball control reducing unnecessary
+                                plays
+                              </li>
+                              <li>
+                                Better starting field position from special
+                                teams
+                              </li>
+                            </ul>
+                          </div>
+
+                          <div className="space-y-2">
+                            <h4 className="font-semibold text-gray-800">
+                              Chiefs' Offensive Success Indicators
+                            </h4>
+                            <ul className="list-disc pl-5 space-y-1">
+                              <li>High points per drive ratio</li>
+                              <li>Superior red zone touchdown percentage</li>
+                              <li>Fewer plays needed to score</li>
+                              <li>Better third-down conversion rate</li>
+                            </ul>
+                          </div>
+                        </div>
+
+                        <p className="mt-4 text-sm bg-red-50 p-4 rounded-lg border border-red-100">
+                          <span className="font-semibold">Key Insight:</span>{" "}
+                          While many teams accumulate more total yards, the
+                          Chiefs' efficiency in converting opportunities into
+                          points demonstrates that quality of plays matters more
+                          than quantity. Their strategic approach under Andy
+                          Reid and Patrick Mahomes focuses on maximizing each
+                          possession rather than accumulating raw yardage stats.
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                );
+              })()}
             </div>
           </div>
-          <div className="parallax">
-            <div className="parallax-content">
-              <h1 className="text-5xl font-bold">Parallax Effect</h1>
-              <p className="text-lg mt-4">
-                Experience the depth as the background moves slower than the
-                content.
-              </p>
-            </div>
-          </div>
-        </main>
+        </div>
       </div>
 
-      {/* Football Grid Section */}
+      {/*
+      {/* Football Grid Section }
       <div className="relative h-screen flex flex-col items-center justify-center bg-gray-100">
         <h2 className="text-4xl font-bold text-center mt-12 mb-6">
           Click on a football to view their stats!
@@ -561,6 +766,8 @@ const App = () => {
         </div>
       </div>
 
+      */}
+
       {/* Popup */}
       {isPopupVisible && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -575,61 +782,385 @@ const App = () => {
           </div>
         </div>
       )}
+      {/* Play Analysis Section with Transition */}
+      <div className="w-full min-h-screen bg-gradient-to-b from-gray-900 to-red-900 py-12">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-8">
+            <h2 className="text-5xl font-bold text-white mb-4">
+              Offensive Strategy Breakdown
+            </h2>
+            <p className="text-xl text-gray-300 mb-8">
+              Understanding the Chiefs' Dominant Offensive Scheme
+            </p>
+            <div className="w-32 h-1 bg-red-500 mx-auto rounded-full mb-8" />
+          </div>
 
-      {/* QB Comparison */}
-      <div className="w-full max-w-6xl mx-auto p-8 bg-gray-100">
-        <h2 className="text-4xl font-bold text-center mb-12">
-          2023 Playoff Quarterback Stats
-        </h2>
-
-        <div className="space-y-12">
-          {qbData.map((qb, index) => (
-            <div key={index} className="relative">
-              <div className="flex items-center space-x-8">
-                {/* QB Info Section */}
-                <div
-                  className="flex items-center cursor-pointer space-x-6"
-                  onClick={() =>
-                    setSelectedQB(qb.name === selectedQB ? null : qb.name)
-                  }
-                >
-                  {/* QB Image */}
-                  <img
-                    src={qb.image}
-                    alt={qb.name}
-                    className="w-48 h-64 object-cover rounded-lg shadow-lg"
-                  />
-                  <h3 className="text-2xl font-semibold">{qb.name}</h3>
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg shadow-xl p-8">
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Formation Distribution */}
+              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <Trophy className="w-6 h-6 text-red-500" />
+                  <h3 className="text-lg font-semibold text-white">
+                    Formation Usage
+                  </h3>
                 </div>
-
-                {/* Football Animation Section */}
-                <div className="flex-grow relative h-16">
-                  <div
-                    className={`absolute top-1/2 -translate-y-1/2 transition-all duration-1000 ease-in-out`}
-                    style={{
-                      left:
-                        selectedQB === qb.name
-                          ? `${getFootballPosition(qb.playoffYards)}px`
-                          : "0px",
+                <div className="h-[300px] relative">
+                  <Bar
+                    data={{
+                      labels: ["Shotgun", "No Huddle", "Standard"],
+                      datasets: [
+                        {
+                          data: [65, 20, 15],
+                          backgroundColor: [
+                            "rgba(220, 38, 38, 0.8)",
+                            "rgba(59, 130, 246, 0.8)",
+                            "rgba(132, 204, 22, 0.8)",
+                          ],
+                          borderColor: [
+                            "rgb(239, 68, 68)",
+                            "rgb(59, 130, 246)",
+                            "rgb(132, 204, 22)",
+                          ],
+                          borderWidth: 1,
+                        },
+                      ],
                     }}
-                  >
-                    <img
-                      src={footballImg}
-                      alt="Football"
-                      className="w-12 h-auto"
-                    />
-                  </div>
+                    options={{
+                      responsive: true,
+                      plugins: {
+                        legend: {
+                          display: false,
+                        },
+                        tooltip: {
+                          callbacks: {
+                            label: (context) => `${context.raw}% of plays`,
+                          },
+                        },
+                      },
+                      scales: {
+                        y: {
+                          beginAtZero: true,
+                          max: 100,
+                          grid: {
+                            color: "rgba(255, 255, 255, 0.1)",
+                          },
+                          ticks: {
+                            color: "rgba(255, 255, 255, 0.8)",
+                          },
+                        },
+                        x: {
+                          grid: {
+                            color: "rgba(255, 255, 255, 0.1)",
+                          },
+                          ticks: {
+                            color: "rgba(255, 255, 255, 0.8)",
+                          },
+                        },
+                      },
+                    }}
+                  />
+                </div>
+              </div>
 
-                  {/* Yards display */}
-                  {selectedQB === qb.name && (
-                    <div className="absolute top-full left-0 mt-2 text-lg font-semibold">
-                      {qb.playoffYards} yards
-                    </div>
-                  )}
+              {/* Success Analysis */}
+              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <Activity className="w-6 h-6 text-red-500" />
+                  <h3 className="text-lg font-semibold text-white">
+                    Formation Success Rates
+                  </h3>
+                </div>
+                <div className="h-[300px] relative">
+                  <Bar
+                    data={{
+                      labels: ["Shotgun", "No Huddle", "Standard"],
+                      datasets: [
+                        {
+                          label: "Successful Plays",
+                          data: [42, 15, 12],
+                          backgroundColor: "rgba(34, 197, 94, 0.8)",
+                          borderColor: "rgb(34, 197, 94)",
+                          borderWidth: 1,
+                        },
+                        {
+                          label: "Unsuccessful Plays",
+                          data: [23, 5, 3],
+                          backgroundColor: "rgba(239, 68, 68, 0.8)",
+                          borderColor: "rgb(239, 68, 68)",
+                          borderWidth: 1,
+                        },
+                      ],
+                    }}
+                    options={{
+                      responsive: true,
+                      plugins: {
+                        legend: {
+                          position: "top",
+                          labels: {
+                            color: "rgba(255, 255, 255, 0.8)",
+                          },
+                        },
+                        tooltip: {
+                          callbacks: {
+                            label: (context) => `${context.raw} plays`,
+                          },
+                        },
+                      },
+                      scales: {
+                        y: {
+                          beginAtZero: true,
+                          grid: {
+                            color: "rgba(255, 255, 255, 0.1)",
+                          },
+                          ticks: {
+                            color: "rgba(255, 255, 255, 0.8)",
+                          },
+                        },
+                        x: {
+                          grid: {
+                            color: "rgba(255, 255, 255, 0.1)",
+                          },
+                          ticks: {
+                            color: "rgba(255, 255, 255, 0.8)",
+                          },
+                        },
+                      },
+                    }}
+                  />
                 </div>
               </div>
             </div>
-          ))}
+
+            <div className="mt-12 grid md:grid-cols-3 gap-6">
+              <div className="bg-white/5 backdrop-blur-sm p-6 rounded-xl border border-red-500/20">
+                <Star className="w-8 h-8 text-red-500 mb-4" />
+                <h4 className="text-lg font-semibold text-white mb-3">
+                  Mahomes Magic
+                </h4>
+                <p className="text-gray-300">
+                  Under Patrick Mahomes' leadership, the shotgun formation
+                  becomes a lethal weapon, allowing for quick reads and
+                  explosive plays that keep defenses guessing.
+                </p>
+              </div>
+
+              <div className="bg-white/5 backdrop-blur-sm p-6 rounded-xl border border-red-500/20">
+                <Crown className="w-8 h-8 text-red-500 mb-4" />
+                <h4 className="text-lg font-semibold text-white mb-3">
+                  Andy Reid's Innovation
+                </h4>
+                <p className="text-gray-300">
+                  Coach Reid's creative play-calling and formation variations
+                  have revolutionized the NFL, making the Chiefs' offense one of
+                  the most unpredictable in the league.
+                </p>
+              </div>
+
+              <div className="bg-white/5 backdrop-blur-sm p-6 rounded-xl border border-red-500/20">
+                <Trophy className="w-8 h-8 text-red-500 mb-4" />
+                <h4 className="text-lg font-semibold text-white mb-3">
+                  Championship DNA
+                </h4>
+                <p className="text-gray-300">
+                  The Chiefs' formation versatility and high success rates
+                  across different setups showcase why they've dominated the AFC
+                  and secured multiple Super Bowl victories.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-8 p-6 bg-white/5 backdrop-blur-sm rounded-xl border border-red-500/20">
+              <h4 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                <Activity className="w-6 h-6 text-red-500" />
+                The Chiefs' Advantage
+              </h4>
+              <p className="text-gray-300 mb-4">
+                The data reveals the Chiefs' masterful use of different
+                formations, with a clear emphasis on the shotgun formation that
+                maximizes Patrick Mahomes' ability to read defenses and make
+                split-second decisions. This strategic approach, combined with
+                Andy Reid's innovative play-calling, creates a offense that's
+                both efficient and unpredictable.
+              </p>
+              <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-300">
+                <ul className="space-y-2">
+                  <li className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-red-500 rounded-full" />
+                    League-leading success rate in shotgun formations
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-red-500 rounded-full" />
+                    Effective no-huddle offense for tempo control
+                  </li>
+                </ul>
+                <ul className="space-y-2">
+                  <li className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-red-500 rounded-full" />
+                    Strategic formation mixing keeps defenses off-balance
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-red-500 rounded-full" />
+                    High conversion rates across all formations
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Transition to QB Stats Section */}
+          <div className="mt-16 relative">
+            <div className="absolute left-1/2 bottom-0 transform -translate-x-1/2 translate-y-1/2 z-10 w-full">
+              <div className="bg-gradient-to-r from-transparent via-red-500 to-transparent h-px w-full opacity-50" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* QB Comparison */}
+      <div className="w-full min-h-screen bg-gradient-to-b from-gray-900 to-red-900 py-12 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-8">
+            <h2 className="text-5xl font-bold text-white mb-4">
+              2023 Playoff Quarterback Stats
+            </h2>
+            <p className="text-xl text-gray-300 mb-8 items-center">
+              Click on a quarterback to see their playoff performance
+            </p>
+            <div className="w-32 h-1 bg-red-500 mx-auto rounded-full mb-8" />
+          </div>
+
+          <div className="space-y-12">
+            {qbData.map((qb) => (
+              <div
+                key={qb.name}
+                className="relative bg-white bg-opacity-10 rounded-xl p-6 backdrop-blur-sm transition-all duration-300 hover:bg-opacity-20"
+              >
+                <div className="flex items-center space-x-8">
+                  <div
+                    className="group cursor-pointer relative"
+                    onClick={() =>
+                      setSelectedQB(qb.name === selectedQB ? null : qb.name)
+                    }
+                  >
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 rounded-lg flex items-center justify-center">
+                      <span className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        Click to view stats
+                      </span>
+                    </div>
+                    <img
+                      src={qb.image}
+                      alt={qb.name}
+                      className="w-48 h-64 object-cover rounded-lg shadow-2xl"
+                    />
+                  </div>
+
+                  <div className="flex-grow">
+                    <div className="flex items-center mb-4">
+                      <h3 className="text-3xl font-bold text-white mr-4">
+                        {qb.name}
+                      </h3>
+                      <span className="text-gray-300">
+                        {qb.name === "Patrick Mahomes"
+                          ? "Super Bowl LVII MVP"
+                          : qb.name === "Joe Burrow"
+                          ? "2023 Pro Bowl Selection"
+                          : "2023 NFL MVP"}
+                      </span>
+                    </div>
+
+                    <div className="relative h-24 bg-gray-800 rounded-full overflow-visible flex items-center">
+                      {/* Distance markers */}
+                      <div className="absolute inset-0 flex justify-between px-4 items-center">
+                        <span className="text-gray-400 text-sm">0</span>
+                        <span className="text-gray-400 text-sm">500</span>
+                        <span className="text-gray-400 text-sm">1000</span>
+                      </div>
+
+                      <motion.div
+                        className="absolute top-1/2 -translate-y-1/2 z-10"
+                        initial={{ x: 0 }}
+                        animate={{
+                          x:
+                            selectedQB === qb.name
+                              ? getFootballPosition(qb.playoffYards)
+                              : 0,
+                        }}
+                        transition={{ type: "spring", stiffness: 100 }}
+                      >
+                        <img
+                          src={footballImg}
+                          alt="Football"
+                          className="w-12 h-12 -mt-8"
+                        />
+                        {/* Yardage label directly under the football */}
+                        {selectedQB === qb.name && (
+                          <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                            <span className="text-white font-bold">
+                              {qb.playoffYards} yards
+                            </span>
+                          </div>
+                        )}
+                      </motion.div>
+
+                      {selectedQB === qb.name && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="absolute top-full left-0 mt-4"
+                        >
+                          <div className="bg-gray-900 bg-opacity-95 backdrop-blur-sm rounded-lg p-2">
+                            {" "}
+                            <div className="grid grid-cols-3 gap-3">
+                              {" "}
+                              <div className="bg-gray-800 rounded p-2">
+                                {" "}
+                                <p className="font-semibold text-gray-200 text-sm">
+                                  Completion
+                                </p>{" "}
+                                <p className="text-lg text-white">
+                                  {" "}
+                                  {qb.name === "Patrick Mahomes"
+                                    ? "68.6%"
+                                    : qb.name === "Joe Burrow"
+                                    ? "0%"
+                                    : "64.7%"}
+                                </p>
+                              </div>
+                              <div className="bg-gray-800 rounded p-2">
+                                <p className="font-semibold text-gray-200 text-sm">
+                                  Touchdowns
+                                </p>
+                                <p className="text-lg text-white">
+                                  {qb.name === "Patrick Mahomes"
+                                    ? "9"
+                                    : qb.name === "Joe Burrow"
+                                    ? "0"
+                                    : "4"}
+                                </p>
+                              </div>
+                              <div className="bg-gray-800 rounded p-2">
+                                <p className="font-semibold text-gray-200 text-sm">
+                                  Interceptions
+                                </p>
+                                <p className="text-lg text-white">
+                                  {qb.name === "Patrick Mahomes"
+                                    ? "2"
+                                    : qb.name === "Joe Burrow"
+                                    ? "0"
+                                    : "1"}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
