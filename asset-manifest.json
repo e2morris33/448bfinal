@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/448bfinal/static/css/main.a1a95d81.css",
+    "main.js": "/448bfinal/static/js/main.2182f4cd.js",
+    "static/js/453.5d16aaaa.chunk.js": "/448bfinal/static/js/453.5d16aaaa.chunk.js",
+    "static/media/burrow.png": "/448bfinal/static/media/burrow.b7a05ad9fcc1d415b78c.png",
+    "static/media/purdy.png": "/448bfinal/static/media/purdy.b3e6f54088f1a84c39d8.png",
+    "static/media/trophy.png": "/448bfinal/static/media/trophy.0818038928cb2420486c.png",
+    "static/media/goff.png": "/448bfinal/static/media/goff.efca1e3bf11031dd4ec1.png",
+    "static/media/brady.png": "/448bfinal/static/media/brady.3dcc810f5bad442f64b0.png",
+    "static/media/allen.png": "/448bfinal/static/media/allen.fac1deb693d38071deab.png",
+    "static/media/mahomes.png": "/448bfinal/static/media/mahomes.637a311884f5576c585e.png",
+    "static/media/stafford.png": "/448bfinal/static/media/stafford.fc1c74c63fca7fc4f8aa.png",
+    "static/media/field.jpg": "/448bfinal/static/media/field.504781dae8385b6cadcc.jpg",
+    "static/media/football.png": "/448bfinal/static/media/football.b597bb6a6d0f7faad4ca.png",
+    "index.html": "/448bfinal/index.html",
+    "main.a1a95d81.css.map": "/448bfinal/static/css/main.a1a95d81.css.map",
+    "main.2182f4cd.js.map": "/448bfinal/static/js/main.2182f4cd.js.map",
+    "453.5d16aaaa.chunk.js.map": "/448bfinal/static/js/453.5d16aaaa.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a1a95d81.css",
+    "static/js/main.2182f4cd.js"
+  ]
+}
