@@ -200,7 +200,7 @@ button:hover {
 .parallax {
   position: relative;
   height: 100vh; /* Full viewport height */
-  background-image: url("random.jpg"); /* Replace with your image URL */
+  background-image: url("./images/field.jpg"); /* Replace with your image URL */
   background-attachment: fixed; /* Key property for parallax effect */
   background-position: center;
   background-repeat: no-repeat;
