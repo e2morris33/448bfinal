@@ -15,9 +15,13 @@ import { motion } from "framer-motion";
 import "./App.css";
 
 import mahomesImg from "./images/mahomes.png";
-import burrowImg from "./images/burrow.png";
-import jacksonImg from "./images/jackson.png";
+import staffordImg from "./images/stafford.png";
+import goffImg from "./images/goff.png";
+import purdyImg from "./images/purdy.png";
 import footballImg from "./images/football.png";
+import burrowImg from "./images/burrow.png";
+import allenImg from "./images/allen.png";
+import bradyImg from "./images/brady.png";
 
 import { Trophy, TrendingUp, Flag, Activity } from "lucide-react";
 import { Star, Crown } from "lucide-react";
@@ -43,36 +47,101 @@ const App = () => {
   const rightSectionRef = useRef(null);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [popupText, setPopupText] = useState("");
-  const [hasScrolledToAbout, setHasScrolledToAbout] = useState(false);
   const aboutSectionRef = useRef(null);
   const [selectedQB, setSelectedQB] = useState(null);
   const [selectedMetric, setSelectedMetric] = useState("yardage");
+  const [selectedSeason, setSelectedSeason] = useState(2023);
 
   const qbData = [
     {
       name: "Patrick Mahomes",
-      playoffYards: 1051,
       image: mahomesImg,
+      playoffYards: 283,
+      season: 2020,
+      completion: "64.9%",
+      touchdowns: "1.33",
+      interceptions: "0.67",
+    },
+    {
+      name: "Tom Brady",
+      image: bradyImg,
+      playoffYards: 265,
+      season: 2020,
+      completion: "58.6%",
+      touchdowns: "2.5",
+      interceptions: "0.75",
+    },
+    {
+      name: "Josh Allen",
+      image: allenImg,
+      playoffYards: 272,
+      season: 2020,
+      completion: "64.17%",
+      touchdowns: "1.67",
+      interceptions: "0.33",
+    },
+    {
+      name: "Patrick Mahomes",
+      image: mahomesImg,
+      playoffYards: 350,
+      season: 2023,
+      completion: "69.7%",
+      touchdowns: "1.5",
+      interceptions: "0.25",
+    },
+    {
+      name: "Patrick Mahomes",
+      image: mahomesImg,
+      playoffYards: 352,
+      season: 2021,
+      completion: "72.9%",
+      touchdowns: "3.67",
+      interceptions: "1",
+    },
+    {
+      name: "Matthew Stafford",
+      image: staffordImg,
+      playoffYards: 297,
+      season: 2021,
+      completion: "70%",
+      touchdowns: "2.25",
+      interceptions: "0.75",
     },
     {
       name: "Joe Burrow",
-      playoffYards: 0,
+      playoffYards: 276,
       image: burrowImg,
+      season: 2021,
+      completion: "68.3%",
+      touchdowns: "1.25",
+      interceptions: "0.5",
     },
     {
-      name: "Lamar Jackson",
-      playoffYards: 452,
-      image: jacksonImg,
+      name: "Jared Goff",
+      image: goffImg,
+      playoffYards: 385,
+      season: 2023,
+      completion: "69.3%",
+      touchdowns: "1.33",
+      interceptions: "0",
+    },
+    {
+      name: "Brock Purdy",
+      playoffYards: 774 / 3,
+      image: purdyImg,
+      season: 2023,
+      completion: "61.1%",
+      touchdowns: "1",
+      interceptions: "0.33",
     },
   ];
 
   const getFootballPosition = (yards) => {
-    return Math.min(yards * 0.85, 800);
-  };
+    const maxYards = 500; // Maximum yardage displayed
+    const containerWidth = 800; // Width of the visual container (adjust as needed)
 
-  const handleFootballClick = (text) => {
-    setPopupText(text);
-    setIsPopupVisible(true);
+    // Scale yards proportionally to the container width
+    return (yards / maxYards) * containerWidth;
   };
 
   const closePopup = () => {
@@ -241,11 +310,14 @@ const App = () => {
             >
               Roster
             </a>
-            <a href="#" className="hover:text-yellow-300">
+
+            <a
+              href="https://www.chiefs.com/schedule/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-yellow-300"
+            >
               Schedule
-            </a>
-            <a href="#" className="hover:text-yellow-300">
-              Stats
             </a>
           </nav>
         </div>
@@ -301,13 +373,13 @@ const App = () => {
           </div>
 
           <div className="text-center space-y-4">
-            <h2 className="text-2xl font-bold text-gray-800">
+            <h2 className="text-2xl font-bold text-gray-800 text-center">
               Dynasty in the Making
             </h2>
             <p className="text-gray-600">
               Experience the excitement of Chiefs Kingdom, where tradition meets
-              excellence. Led by Patrick Mahomes and coached by Andy Reid, we're
-              writing NFL history.
+              excellence. Led by Patrick Mahomes and coached by Andy Reid,
+              they're writing NFL history.
             </p>
           </div>
 
@@ -318,7 +390,7 @@ const App = () => {
               }
               className="px-6 py-3 bg-red-600 text-white font-bold rounded-full hover:bg-red-700 transition-colors"
             >
-              Explore Our Journey
+              Explore Their Journey
             </button>
           </div>
         </div>
@@ -481,7 +553,7 @@ const App = () => {
             <div className="p-4 border-b border-gray-200">
               <div className="text-2xl font-bold text-red-600 flex items-center gap-2">
                 <Activity className="w-6 h-6" />
-                Chiefs Performance Analysis
+                Chiefs Performance Analysis in 2023
               </div>
             </div>
             <div className="p-4">
@@ -783,8 +855,8 @@ const App = () => {
         </div>
       )}
       {/* Play Analysis Section with Transition */}
-      <div className="w-full min-h-screen bg-gradient-to-b from-gray-900 to-red-900 py-12">
-        <div className="max-w-6xl mx-auto px-4">
+      <div className="w-full min-h-screen bg-gradient-to-b from-gray-900 to-red-900 py-12 flex items-center justify-center">
+        <div className="max-w-6xl mx-auto px-4 text-center">
           <div className="text-center mb-8">
             <h2 className="text-5xl font-bold text-white mb-4">
               Offensive Strategy Breakdown
@@ -835,6 +907,14 @@ const App = () => {
                         tooltip: {
                           callbacks: {
                             label: (context) => `${context.raw}% of plays`,
+                          },
+                        },
+                        title: {
+                          display: true,
+                          text: "Percentage of Each Type of Play (%)",
+                          color: "rgba(255, 255, 255, 0.8)",
+                          font: {
+                            size: 12,
                           },
                         },
                       },
@@ -1022,145 +1102,174 @@ const App = () => {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-8">
             <h2 className="text-5xl font-bold text-white mb-4">
-              2023 Playoff Quarterback Stats
+              Playoff Quarterback Stats
             </h2>
             <p className="text-xl text-gray-300 mb-8 items-center">
-              Click on a quarterback to see their playoff performance
+              Click on a quarterback to see their playoff performance in the
+              corresponding year.
             </p>
+            {/* Season Selector */}
+            <div className="flex justify-center gap-4 mb-8">
+              <button
+                onClick={() => setSelectedSeason(2020)}
+                className={`px-6 py-2 rounded-full text-white transition-all duration-300 ${
+                  selectedSeason === 2020
+                    ? "bg-red-600 hover:bg-red-700"
+                    : "bg-gray-700 hover:bg-gray-600"
+                }`}
+              >
+                2020
+              </button>
+              <button
+                onClick={() => setSelectedSeason(2021)}
+                className={`px-6 py-2 rounded-full text-white transition-all duration-300 ${
+                  selectedSeason === 2021
+                    ? "bg-red-600 hover:bg-red-700"
+                    : "bg-gray-700 hover:bg-gray-600"
+                }`}
+              >
+                2021
+              </button>
+
+              <button
+                onClick={() => setSelectedSeason(2023)}
+                className={`px-6 py-2 rounded-full text-white transition-all duration-300 ${
+                  selectedSeason === 2023
+                    ? "bg-red-600 hover:bg-red-700"
+                    : "bg-gray-700 hover:bg-gray-600"
+                }`}
+              >
+                2023
+              </button>
+            </div>
             <div className="w-32 h-1 bg-red-500 mx-auto rounded-full mb-8" />
           </div>
 
           <div className="space-y-12">
-            {qbData.map((qb) => (
-              <div
-                key={qb.name}
-                className="relative bg-white bg-opacity-10 rounded-xl p-6 backdrop-blur-sm transition-all duration-300 hover:bg-opacity-20"
-              >
-                <div className="flex items-center space-x-8">
-                  <div
-                    className="group cursor-pointer relative"
-                    onClick={() =>
-                      setSelectedQB(qb.name === selectedQB ? null : qb.name)
-                    }
-                  >
-                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 rounded-lg flex items-center justify-center">
-                      <span className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        Click to view stats
-                      </span>
-                    </div>
-                    <img
-                      src={qb.image}
-                      alt={qb.name}
-                      className="w-48 h-64 object-cover rounded-lg shadow-2xl"
-                    />
-                  </div>
-
-                  <div className="flex-grow">
-                    <div className="flex items-center mb-4">
-                      <h3 className="text-3xl font-bold text-white mr-4">
-                        {qb.name}
-                      </h3>
-                      <span className="text-gray-300">
-                        {qb.name === "Patrick Mahomes"
-                          ? "Super Bowl LVII MVP"
-                          : qb.name === "Joe Burrow"
-                          ? "2023 Pro Bowl Selection"
-                          : "2023 NFL MVP"}
-                      </span>
+            {qbData
+              .filter((qb) => qb.season === selectedSeason)
+              .map((qb) => (
+                <div
+                  key={qb.name}
+                  className="relative bg-white bg-opacity-10 rounded-xl p-6 backdrop-blur-sm transition-all duration-300 hover:bg-opacity-20"
+                >
+                  <div className="flex items-center space-x-8">
+                    <div
+                      className="group cursor-pointer relative"
+                      onClick={() =>
+                        setSelectedQB(qb.name === selectedQB ? null : qb.name)
+                      }
+                    >
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 rounded-lg flex items-center justify-center">
+                        <span className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          Click to view stats
+                        </span>
+                      </div>
+                      <img
+                        src={qb.image}
+                        alt={qb.name}
+                        className="w-48 h-64 object-cover rounded-lg shadow-2xl"
+                      />
                     </div>
 
-                    <div className="relative h-24 bg-gray-800 rounded-full overflow-visible flex items-center">
-                      {/* Distance markers */}
-                      <div className="absolute inset-0 flex justify-between px-4 items-center">
-                        <span className="text-gray-400 text-sm">0</span>
-                        <span className="text-gray-400 text-sm">500</span>
-                        <span className="text-gray-400 text-sm">1000</span>
+                    <div className="flex-grow">
+                      <div className="flex items-center mb-4">
+                        <h3 className="text-3xl font-bold text-white mr-4">
+                          {qb.name}
+                        </h3>
+                        <span className="text-gray-300">{qb.accolade}</span>
                       </div>
 
-                      <motion.div
-                        className="absolute top-1/2 -translate-y-1/2 z-10"
-                        initial={{ x: 0 }}
-                        animate={{
-                          x:
-                            selectedQB === qb.name
-                              ? getFootballPosition(qb.playoffYards)
-                              : 0,
-                        }}
-                        transition={{ type: "spring", stiffness: 100 }}
-                      >
-                        <img
-                          src={footballImg}
-                          alt="Football"
-                          className="w-12 h-12 -mt-8"
-                        />
-                        {/* Yardage label directly under the football */}
-                        {selectedQB === qb.name && (
-                          <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                            <span className="text-white font-bold">
-                              {qb.playoffYards} yards
-                            </span>
-                          </div>
-                        )}
-                      </motion.div>
+                      <div className="relative h-24 bg-gray-800 rounded-full overflow-visible flex items-center">
+                        {/* Distance markers */}
+                        <div className="absolute inset-0 flex justify-between px-4 items-center">
+                          <span className="text-gray-400 text-sm">0</span>
+                          <span className="text-gray-400 text-sm">250</span>
+                          <span className="text-gray-400 text-sm">500</span>
+                        </div>
 
-                      {selectedQB === qb.name && (
                         <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="absolute top-full left-0 mt-4"
+                          className="absolute top-1/2 -translate-y-1/2 z-10"
+                          initial={{ x: 0 }}
+                          animate={{
+                            x:
+                              selectedQB === qb.name
+                                ? getFootballPosition(qb.playoffYards)
+                                : 0,
+                          }}
+                          transition={{ type: "spring", stiffness: 100 }}
                         >
-                          <div className="bg-gray-900 bg-opacity-95 backdrop-blur-sm rounded-lg p-2">
-                            {" "}
-                            <div className="grid grid-cols-3 gap-3">
-                              {" "}
-                              <div className="bg-gray-800 rounded p-2">
-                                {" "}
-                                <p className="font-semibold text-gray-200 text-sm">
-                                  Completion
-                                </p>{" "}
-                                <p className="text-lg text-white">
-                                  {" "}
-                                  {qb.name === "Patrick Mahomes"
-                                    ? "68.6%"
-                                    : qb.name === "Joe Burrow"
-                                    ? "0%"
-                                    : "64.7%"}
-                                </p>
-                              </div>
-                              <div className="bg-gray-800 rounded p-2">
-                                <p className="font-semibold text-gray-200 text-sm">
-                                  Touchdowns
-                                </p>
-                                <p className="text-lg text-white">
-                                  {qb.name === "Patrick Mahomes"
-                                    ? "9"
-                                    : qb.name === "Joe Burrow"
-                                    ? "0"
-                                    : "4"}
-                                </p>
-                              </div>
-                              <div className="bg-gray-800 rounded p-2">
-                                <p className="font-semibold text-gray-200 text-sm">
-                                  Interceptions
-                                </p>
-                                <p className="text-lg text-white">
-                                  {qb.name === "Patrick Mahomes"
-                                    ? "2"
-                                    : qb.name === "Joe Burrow"
-                                    ? "0"
-                                    : "1"}
-                                </p>
+                          <img
+                            src={footballImg}
+                            alt="Football"
+                            className="w-18 h-12 -mt-8"
+                          />
+                          {/* Yardage label directly under the football */}
+                          {selectedQB === qb.name && (
+                            <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                              <span className="text-white font-bold">
+                                {qb.playoffYards} yards / game
+                              </span>
+                            </div>
+                          )}
+                        </motion.div>
+
+                        {selectedQB === qb.name && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="absolute top-full left-0 mt-4"
+                          >
+                            <div className="bg-gray-900 bg-opacity-95 backdrop-blur-sm rounded-lg p-2">
+                              <div className="grid grid-cols-3 gap-3">
+                                <div className="bg-gray-800 rounded p-2">
+                                  <p className="font-semibold text-gray-200 text-sm">
+                                    Total Pass Completion %
+                                  </p>
+                                  <p className="text-lg text-white text-center">
+                                    {qb.completion}
+                                  </p>
+                                </div>
+                                <div className="bg-gray-800 rounded p-2">
+                                  <p className="font-semibold text-gray-200 text-sm">
+                                    Touchdowns Per Game
+                                  </p>
+                                  <p className="text-lg text-white text-center">
+                                    {qb.touchdowns}
+                                  </p>
+                                </div>
+                                <div className="bg-gray-800 rounded p-2">
+                                  <p className="font-semibold text-gray-200 text-sm">
+                                    Interceptions Per Game
+                                  </p>
+                                  <p className="text-lg text-white text-center">
+                                    {qb.interceptions}
+                                  </p>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </motion.div>
-                      )}
+                          </motion.div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
+        </div>
+        <div className="relative bg-white bg-opacity-10 rounded-xl px-8 py-6 backdrop-blur-sm transition-all duration-300 hover:bg-opacity-20 mt-12 mx-auto max-w-6xl w-full">
+          <h2
+            className="text-2xl text-white text-center font-bold mb-4"
+            style={{ textShadow: "none" }}
+          >
+            Mahomes: The Model of Consistency
+          </h2>
+          <p className="text-xl text-gray-300 text-center max-w-none">
+            The graphics above compare Patrick Mahomes to other top quarterbacks
+            during the corresponding years of the playoffs. Mahomes consistently
+            stands out as one of the top-performing QBs, demonstrating his
+            unmatched reliability and excellence on the big stage.
+          </p>
         </div>
       </div>
     </div>
